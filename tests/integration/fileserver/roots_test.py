@@ -18,7 +18,7 @@ roots.__opts__ = {}
 
 # Import Python libs
 import os
-
+import random
 
 @skipIf(NO_MOCK, NO_MOCK_REASON)
 class RootsTest(integration.ModuleCase):
@@ -37,6 +37,16 @@ class RootsTest(integration.ModuleCase):
                                          'file_ignore_glob': False}):
             ret = roots.file_list({'saltenv': 'base'})
             self.assertIn('testfile', ret)
+
+    def test_file_list_with_glob(self):
+        with patch.dict(roots.__opts__, {'cachedir': os.path.join(self.master_opts['cachedir'], "test_without_a_cache", str(random.random())),
+                                         'file_roots': {'base': [os.path.join(integration.FILES, 'file', 'base', 't*')]},
+                                         'fileserver_ignoresymlinks': False,
+                                         'fileserver_followsymlinks': False,
+                                         'file_ignore_regex': False,
+                                         'file_ignore_glob': False}):
+            ret = roots.file_list({'saltenv': 'base'})
+            self.assertIn('test.sls', ret)
 
     def test_find_file(self):
         with patch.dict(roots.__opts__, {'file_roots': self.master_opts['file_roots'],

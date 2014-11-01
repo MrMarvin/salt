@@ -9,6 +9,7 @@ option.
 # Import python libs
 import os
 import logging
+from glob import glob
 
 # Import salt libs
 import salt.fileserver
@@ -262,7 +263,7 @@ def _file_lists(load, form):
             'empty_dirs': [],
             'links': []
         }
-        for path in __opts__['file_roots'][load['saltenv']]:
+        for path in _expand_glob_path(__opts__['file_roots'][load['saltenv']]):
             for root, dirs, files in os.walk(
                     path,
                     followlinks=__opts__['fileserver_followsymlinks']):
@@ -291,6 +292,11 @@ def _file_lists(load, form):
     # Shouldn't get here, but if we do, this prevents a TypeError
     return []
 
+def _expand_glob_path(file_roots):
+    unglobbed_path = []
+    for path in file_roots:
+        unglobbed_path.extend(glob(path))
+    return unglobbed_path
 
 def file_list(load):
     '''
