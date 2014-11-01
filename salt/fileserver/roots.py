@@ -293,6 +293,10 @@ def _file_lists(load, form):
     return []
 
 def _expand_glob_path(file_roots):
+    '''
+    Applies shell globbing to a set of directories and returns
+    the expanded paths
+    '''
     unglobbed_path = []
     for path in file_roots:
         unglobbed_path.extend(glob(path))
